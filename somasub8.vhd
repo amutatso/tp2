@@ -1,37 +1,36 @@
-library IEEE;
-use IEEE.Std_Logic_1164.all;
-use ieee.numeric_std.all;
-use ieee.signed_std.all;
 
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_signed.all;
 
 entity somasub8bits is
-port (A,B: in SIGNED(7 downto 0);
-    Op: in std_logic;
-    result: out SIGNED(7 downto 0);
-    overflow: out std_logic);
+
+
+
+port(OP: in std_logic;
+    A, B: in std_logic_vector(7 downto 0);
+    S: out std_logic_vector(7 downto 0);
+	 OVF: out std_logic);
 end somasub8bits;
 
-architecture somasub8bitsarch of somasub8bits is
+architecture circ1 of somasub8bits is
 
-    signal SO, SU, MUX: std_logic_vector(7 downto 0);
-    
-    component mux2_1x8 is
-        port(sel: in std_logic;
-        ent0, ent1: in std_logic_vector;
-        saida: out std_logic_vector);
-        end component;
+signal sig_s, sig_b: std_logic_vector(7 downto 0);
 
 begin
-    
-    SO <= A + B
-    SU <= A - B  
-
-    mux0: mux2_1x8 port map (sel <= OP,
-                            ent0 <= SO, 
-                            ent1 <= SU, 
-                            saida <= result);
-
-    overflow <= '1' if (A < 0 and B < 0 and result > 0) or (A > 0 and B > 0 and result < 0)
 
 
-end somasub8arch;
+sig_b <= B when OP = '0' else
+			-B;
+			
+sig_s <= A + sig_b;
+
+S <= sig_s;
+
+OVF  <= (A(7) and sig_b(7) and not sig_s(7)) or (not A(7) and not sig_b(7) and sig_s(7));
+
+
+
+
+end circ1;
